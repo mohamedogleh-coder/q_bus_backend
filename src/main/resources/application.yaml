@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: q_bus_backend
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bus_db
+    username: ogleh
+    password: 1122
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
