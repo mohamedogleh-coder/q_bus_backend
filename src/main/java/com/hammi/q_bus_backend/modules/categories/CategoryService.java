@@ -72,8 +72,9 @@ public class CategoryService {
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("category_unq")) {
                 throw new ApiException("This category already exists");
+            } else {
+                throw new ApiException(e.getMessage());
             }
-            throw new ApiException(e.getMessage());
         }
     }
 
