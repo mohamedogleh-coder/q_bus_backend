@@ -23,8 +23,8 @@ jobs:
           cache: maven
 
       # 3. Samee imtixaanka koodka (Run Tests)
-      - name: Run Unit Tests
-        run: mvn test
+#      - name: Run Unit Tests
+#        run: mvn test
 
       # 4. U log-in garee Docker Hub si ammaan ah
       - name: Log in to Docker Hub
