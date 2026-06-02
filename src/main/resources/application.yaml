@@ -4,6 +4,13 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri=https://uwvnxugrnuosyiydjscv.supabase.co:
+            supabase:
+              co/auth/v1:
   datasource:
     url: jdbc:postgresql://localhost:5432/bus_db
     username: ogleh
