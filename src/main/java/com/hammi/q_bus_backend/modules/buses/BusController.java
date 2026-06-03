@@ -20,6 +20,11 @@ public class BusController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(busService.registerBus(request)));
     }
 
+    @PutMapping("/{busId}")
+    public ResponseEntity<ApiResponse<BusDTO>> updateBus(@Valid @RequestBody BusDAO request, @PathVariable UUID busId) {
+        return ResponseEntity.ok(new ApiResponse<>(busService.updateBus(request, busId)));
+    }
+
     @GetMapping("/{busId}")
     public ResponseEntity<ApiResponse<BusDTO>> getBusById(@PathVariable UUID busId) {
         return ResponseEntity.ok(new ApiResponse<>(busService.getBusById(busId)));

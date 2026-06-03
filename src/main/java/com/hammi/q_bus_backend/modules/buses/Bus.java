@@ -3,6 +3,9 @@ package com.hammi.q_bus_backend.modules.buses;
 import com.hammi.q_bus_backend.modules.categories.Category;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +37,9 @@ public class Bus {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "bus", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<BusSeat> busSeats=new ArrayList<>();
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
