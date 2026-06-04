@@ -1,22 +1,29 @@
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
+    #Kan wuxuu sababayaa in spring boot soo akhriyo properties ka oo fly way aanu ka hor kicin
   application:
     name: q_bus_backend
+
   flyway:
     enabled: true
     baseline-on-migrate: true
+
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri=https://uwvnxugrnuosyiydjscv.supabase.co:
-            supabase:
-              co/auth/v1:
+          issuer-uri: https://otfloobvxifgzklljdoy.supabase.co/auth/v1
   datasource:
-    url: jdbc:postgresql://localhost:5432/bus_db
-    username: ogleh
-    password: 1122
-    driver-class-name: org.postgresql.Driver
+    primary:
+       username: ${PRIMARY_DB_USER}
+       url: ${PRIMARY_DB_URL}
+       password: ${PRIMARY_DB_PASSWORD}
+       driver-class-name: org.postgresql.Driver
+    secondary:
+      url: ${SUPABASE_URL}
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
