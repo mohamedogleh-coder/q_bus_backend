@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/buses")
 public class BusController {
-    private final BusService busService;
+    private  final BusService busService;
 
     @PostMapping("/")
     public ResponseEntity<ApiResponse<BusDTO>> registerBus(@Valid @RequestBody BusDAO request) {
