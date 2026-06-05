@@ -1,6 +1,7 @@
 package com.hammi.q_bus_backend.modules.buses;
 
 import com.hammi.q_bus_backend.modules.categories.Category;
+import com.hammi.q_bus_backend.modules.drivers.BusDriver;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,8 +39,12 @@ public class Bus {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Builder.Default
     @OneToMany(mappedBy = "bus", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<BusSeat> busSeats=new ArrayList<>();
+    private List<BusSeat> busSeats = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "bus", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<BusDriver> busDrivers = new ArrayList<>();
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;

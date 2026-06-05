@@ -26,13 +26,4 @@ public interface PrintDocumentRepository extends JpaRepository<PrintDocument, Sh
     @Query("SELECT d FROM PrintDocument d LEFT JOIN FETCH d.printedJets p LEFT JOIN FETCH p.jet JOIN FETCH d.bus b JOIN FETCH b.category where b.id=:busId")
     Optional<PrintDocumentProjection> getPrintDocumentByBus_Id(@Param("busId")UUID busId);
 
-    //    UUID busId,
-//    String plateNumber,
-//    int numberOfSeats,
-//    String categoryName,
-//    SteeringSide steeringSide
-//
-//
-//    @Query("SELECT d FROM PrintDocument d JOIN FETCH d.bus b JOIN FETCH b.category where b.id=:busId")
-//    Optional<PrintDocument> getPrintDocumentByBusId(@Param("busId") UUID busId);
 }

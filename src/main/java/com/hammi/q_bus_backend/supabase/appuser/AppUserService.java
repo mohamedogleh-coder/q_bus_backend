@@ -1,4 +1,4 @@
-package com.hammi.q_bus_backend.supabase.drivers;
+package com.hammi.q_bus_backend.supabase.appuser;
 
 import com.hammi.q_bus_backend.exceptions.NotFoundException;
 import com.hammi.q_bus_backend.supabase.roles.RoleRepository;

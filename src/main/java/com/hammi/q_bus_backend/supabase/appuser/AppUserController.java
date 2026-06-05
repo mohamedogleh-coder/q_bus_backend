@@ -1,4 +1,4 @@
-package com.hammi.q_bus_backend.supabase.drivers;
+package com.hammi.q_bus_backend.supabase.appuser;
 
 import com.hammi.q_bus_backend.util.ApiResponse;
 import jakarta.validation.Valid;

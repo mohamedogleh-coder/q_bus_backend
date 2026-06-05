@@ -1,4 +1,4 @@
-package com.hammi.q_bus_backend.supabase.drivers;
+package com.hammi.q_bus_backend.supabase.appuser;
 
 
  import com.hammi.q_bus_backend.supabase.roles.Roles;
@@ -29,6 +29,9 @@ public class AppUser {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "profile_url")
+    private String profileUrl;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

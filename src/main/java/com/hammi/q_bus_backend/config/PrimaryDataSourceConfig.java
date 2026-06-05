@@ -1,109 +1,17 @@
-package com.hammi.q_bus_backend.config; /// /package com.hammi.q_bus_backend.config;
-/// /
-/// /import org.springframework.beans.factory.annotation.Qualifier;
-/// /import org.springframework.boot.context.properties.ConfigurationProperties;
-/// /import org.springframework.boot.jdbc.DataSourceBuilder;
-/// /import org.springframework.context.annotation.Bean;
-/// /import org.springframework.context.annotation.Configuration;
-/// /import org.springframework.context.annotation.Primary;
-/// /import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-/// /import org.springframework.transaction.PlatformTransactionManager;
-/// /
-/// /import javax.sql.DataSource;
-/// /
-/// /@Configuration
-/// /public class DataSourceConfig {
-/// /
-/// /    @Primary
-/// /    @Bean(name = "primary")
-/// /    @ConfigurationProperties("spring.datasource.primary")
-/// /    public DataSource primaryDataSource() {
-/// /        return DataSourceBuilder.create().build();
-/// /    }
-/// /
-/// /
-/// /    @Primary
-/// /    @Bean(name = "firstTransactionManager")
-/// /    public PlatformTransactionManager firstTransactionManager(
-/// /            @Qualifier("primary") DataSource firstDataSource) {
-/// /        return new DataSourceTransactionManager(firstDataSource);
-/// /    }
-/// /
-/// /
-/// /}
-//
-//
-//
-//package com.hammi.q_bus_backend.config;
-//
-//import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.boot.context.properties.ConfigurationProperties;
-//import org.springframework.boot.jdbc.DataSourceBuilder;
-//import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.context.annotation.Primary;
-//import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-//import org.springframework.orm.jpa.JpaTransactionManager;
-//import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-//import org.springframework.transaction.PlatformTransactionManager;
-//
-//import javax.sql.DataSource;
-//import jakarta.persistence.EntityManagerFactory;
-//
-//@Configuration
-//@EnableJpaRepositories(
-//        basePackages = {
-//                "com.hammi.q_bus_backend.modules.buses",
-//                "com.hammi.q_bus_backend.modules.categories",
-//                "com.hammi.q_bus_backend.modules.print_documents"
-//                // Drivers marka laga reebo — taa Supabase ayaa qaadanaysa
-//        },
-//        entityManagerFactoryRef = "entityManagerFactory",
-//        transactionManagerRef   = "firstTransactionManager"
-//)
-//public class DataSourceConfig {
-//
-//    @Primary
-//    @Bean(name = "primaryDataSource")
-//    @ConfigurationProperties("spring.datasource.primary")
-//    public DataSource primaryDataSource() {
-//        return DataSourceBuilder.create().build();
-//    }
-//
-//    @Primary
-//    @Bean(name = "entityManagerFactory")
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-//            EntityManagerFactoryBuilder builder, @Qualifier("primaryDataSource") DataSource dataSource) {
-//        return builder
-//                .dataSource(dataSource)
-//                .packages(
-//                        "com.hammi.q_bus_backend.modules.bookings",
-//                        "com.hammi.q_bus_backend.modules.buses"
-//                )
-//                .persistenceUnit("primary")
-//                .build();
-//    }
-//
-//    @Primary
-//    @Bean(name = "firstTransactionManager")
-//    public PlatformTransactionManager firstTransactionManager(
-//            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
-//        return new JpaTransactionManager(entityManagerFactory);
-//    }
-//}
+package com.hammi.q_bus_backend.config;
 
-
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
 import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -112,7 +20,8 @@ import javax.sql.DataSource;
         entityManagerFactoryRef = "myPrimaryEntityConfig",
         basePackages = {
                 "com.hammi.q_bus_backend.modules",
-        }
+        },
+        transactionManagerRef = "primaryTransactionManager"
 )
 public class PrimaryDataSourceConfig {
 
@@ -137,4 +46,9 @@ public class PrimaryDataSourceConfig {
                 .build();
     }
 
+    @Bean
+    public PlatformTransactionManager primaryTransactionManager(
+            @Qualifier("myPrimaryEntityConfig") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 }

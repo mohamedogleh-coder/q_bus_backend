@@ -9,6 +9,8 @@ public record BusDAO(
         @NotNull(message = "Steering side is required")
         SteeringSide steeringSide,
         @NotNull(message = "Category id is required")
-        Short categoryId
-        ) {
+        Short categoryId,
+        @NotBlank(message = "Driver's phone number is required")
+        String phoneNumber
+) {
 }

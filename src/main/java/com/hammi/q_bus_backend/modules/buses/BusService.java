@@ -3,11 +3,14 @@ package com.hammi.q_bus_backend.modules.buses;
 import com.hammi.q_bus_backend.exceptions.ApiException;
 import com.hammi.q_bus_backend.exceptions.NotFoundException;
 import com.hammi.q_bus_backend.modules.categories.CategoryRepository;
+import com.hammi.q_bus_backend.modules.drivers.BusDriver;
+import com.hammi.q_bus_backend.modules.drivers.BusDriverDTO;
+import com.hammi.q_bus_backend.supabase.appuser.AppUser;
+import com.hammi.q_bus_backend.supabase.appuser.AppUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +19,7 @@ import java.util.UUID;
 public class BusService {
     private final BusRepository busRepository;
     private final CategoryRepository categoryRepository;
-
+    private final AppUserRepository userRepository;
 
     public BusDTO registerBus(BusDAO request) {
         try {
@@ -87,5 +90,42 @@ public class BusService {
         var bus = busRepository.getBusWithCategoryByPlateNumber(plateNumber).orElseThrow(() -> new NotFoundException("Bus not found"));
         return new BusDTO(bus.getId(), bus.getPlateNumber(), bus.getCategory().getNumberOfSeats(),
                 bus.getCategory().getCategoryName(), bus.getCategory().getModelYear(), bus.getSteeringSide(), bus.getCategory().getId());
+    }
+
+
+    public List<BusDriverDTO> getBusDrivers(UUID busId) {
+        var bus = busRepository.getBusDriversByBusId(busId).orElseThrow(() -> new NotFoundException("Bus not found"));
+
+        if (bus.getBusDrivers().isEmpty()) {
+            return List.of();
+        }
+
+        var phoneNumbers = bus.getBusDrivers().stream()
+                .map(BusDriver::getDriverPhone)
+                .toList();
+
+        var appUsersList = userRepository.findAllByPhoneNumberIn(phoneNumbers);
+
+
+        java.util.Map<String, AppUser> userMap = appUsersList.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        AppUser::getPhoneNumber,
+                        user -> user
+                ));
+
+        return bus.getBusDrivers().stream().map(bd -> {
+            AppUser user = userMap.get(bd.getDriverPhone());
+
+            String fullName = (user != null) ? (user.getFirstName() + " " + user.getLastName()).trim() : "Unknown Driver";
+            String profileUrl = (user != null) ? user.getProfileUrl() : null;
+
+            return new BusDriverDTO(
+                    fullName,
+                    bd.getDriverPhone(),
+                    profileUrl,
+                    bd.getIsOwner(),
+                    bd.getIsDefault()
+            );
+        }).toList();
     }
 }
