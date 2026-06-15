@@ -20,7 +20,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Optional<QueueStatus> getBookingStatus(@Param("busId") UUID busId);
 
     @Query("SELECT new com.hammi.q_bus_backend.modules.bookings.dao.ScanSeatInformationDto(" +
-            "c.categoryName, bb.plateNumber, s.stationName, s.stationCost, c.modelYear) " +
+            "b.id,c.categoryName, bb.plateNumber, s.stationName, s.stationCost, c.modelYear) " +
             "FROM Booking b " +
             "JOIN b.bus bb " +
             "JOIN bb.category c " +
