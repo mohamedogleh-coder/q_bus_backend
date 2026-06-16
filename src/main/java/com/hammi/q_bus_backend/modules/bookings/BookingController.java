@@ -1,9 +1,7 @@
 package com.hammi.q_bus_backend.modules.bookings;
 
-import com.hammi.q_bus_backend.modules.bookings.dao.BookSeatDto;
-import com.hammi.q_bus_backend.modules.bookings.dao.QueueRequestDto;
-import com.hammi.q_bus_backend.modules.bookings.dao.ScanSeatInformationDto;
- import com.hammi.q_bus_backend.modules.bookings.service.BookingService;
+import com.hammi.q_bus_backend.modules.bookings.dao.*;
+import com.hammi.q_bus_backend.modules.bookings.service.BookingService;
 import com.hammi.q_bus_backend.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,6 @@ public class BookingController {
 
     @PostMapping("/{bookingId}/book")
     public ResponseEntity<ApiResponse<Integer>> scanSeat(@PathVariable Integer bookingId, @Valid @RequestBody BookSeatDto dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(bookingService.bookSeat(bookingId,dto)));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(bookingService.bookSeat(bookingId, dto)));
     }
 }

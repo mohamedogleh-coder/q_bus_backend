@@ -46,6 +46,10 @@ public class Bus {
     @OneToMany(mappedBy = "bus", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<BusDriver> busDrivers = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "bus", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<BusMerchant> merchants = new ArrayList<>();
+
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 }
