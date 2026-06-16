@@ -59,7 +59,7 @@ public class BookingService {
     }
 
     public ScanSeatInformationDto scanSeat(UUID busId) {
-        QueueStatus status = bookingRepository.getBookingStatus(busId)
+        QueueStatus status = bookingRepository.getBookingStatusByBusId(busId)
                 .orElseThrow(() -> new NotFoundException("Bus is not ready for booking right now."));
 
         if (status.equals(QueueStatus.waiting)) {
@@ -83,29 +83,34 @@ public class BookingService {
     }
 
     public Integer bookSeat(Integer bookingId, BookSeatDto dto) {
-        try {
-            var booking = bookingRepository.findById(bookingId)
-                    .orElseThrow(() -> new NotFoundException("Booking not found."));
+        QueueStatus status = bookingRepository.getBookingStatus(bookingId)
+                .orElseThrow(() -> new NotFoundException("Bus is not ready for booking right now."));
 
-            var seat = BookingSeat.builder()
-                    .seatNumber(dto.seatNumber())
-                    .amountPaid(dto.amountPaid())
-                    .sentFrom(dto.sentFrom())
-                    .sentTo(dto.sentTo())
-                    .build();
-
-            booking.getSeats().add(seat);
-            seat.setBooking(booking);
-
-            var savedBooking = bookingRepository.save(booking);
-            return savedBooking.getId();
-
-        } catch (DataIntegrityViolationException e) {
-            if (e.getMessage() != null && e.getMessage().contains("verify_station_cost")) {
-                throw new ApiException("The amount paid does not match the required station cost.");
-            } else {
-                throw e;
-            }
+        if (status.equals(QueueStatus.waiting)) {
+            throw new ApiException("This bus is still in the waiting queue and is not active yet.");
         }
+
+
+        var booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking not found."));
+
+        if (!booking.getStation().getStationCost().equals(dto.amountPaid())) {
+            throw new ApiException(String.format("Payment rejected! The required station cost is %s, but you provided %s", dto.amountPaid(), booking.getStation().getStationCost()));
+        }
+
+        var seat = BookingSeat.builder()
+                .seatNumber(dto.seatNumber())
+                .amountPaid(dto.amountPaid())
+                .sentFrom(dto.sentFrom())
+                .sentTo(dto.sentTo())
+                .build();
+
+        booking.getSeats().add(seat);
+        seat.setBooking(booking);
+
+        var savedBooking = bookingRepository.save(booking);
+        return savedBooking.getId();
+
+
     }
 }
