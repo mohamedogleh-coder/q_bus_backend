@@ -4,6 +4,8 @@ public record BusMerchantDto(
         short merchantId,
         String merchantNumber,
         String providerName,
-        String providerService
+        String providerService,
+        String prefix,
+        short providerId
 ) {
 }

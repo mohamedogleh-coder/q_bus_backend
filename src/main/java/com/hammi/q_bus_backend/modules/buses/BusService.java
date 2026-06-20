@@ -141,7 +141,7 @@ public class BusService {
         return bus.getMerchants().stream().map((merchant) -> {
             var provider = merchant.getProvider();
             return new BusMerchantDto(merchant.getId(), merchant.getMerchantNumber(),
-                    provider.getProviderName(), provider.getProviderService());
+                    provider.getProviderName(), provider.getProviderService(), provider.getPrefix(), provider.getId());
         }).toList();
     }
 
