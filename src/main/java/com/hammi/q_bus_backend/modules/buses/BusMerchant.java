@@ -1,5 +1,6 @@
 package com.hammi.q_bus_backend.modules.buses;
 
+import com.hammi.q_bus_backend.modules.providers.Provider;
 import jakarta.persistence.*;
 import lombok.*;
 

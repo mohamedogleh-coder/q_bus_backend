@@ -1,4 +1,4 @@
-package com.hammi.q_bus_backend.modules.buses;
+package com.hammi.q_bus_backend.modules.providers;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,4 +21,7 @@ public class Provider {
 
     @Column(name = "provider_service", nullable = false, length = 20)
     private String providerService;
+
+    @Column(name = "prefix", nullable = false, length = 10)
+    private String prefix;
 }

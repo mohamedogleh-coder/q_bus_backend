@@ -5,10 +5,12 @@ import com.hammi.q_bus_backend.exceptions.NotFoundException;
 import com.hammi.q_bus_backend.modules.categories.CategoryRepository;
 import com.hammi.q_bus_backend.modules.drivers.BusDriver;
 import com.hammi.q_bus_backend.modules.drivers.BusDriverDTO;
+import com.hammi.q_bus_backend.modules.providers.ProviderRepository;
 import com.hammi.q_bus_backend.supabase.appuser.AppUser;
 import com.hammi.q_bus_backend.supabase.appuser.AppUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,10 @@ public class BusService {
     private final BusRepository busRepository;
     private final CategoryRepository categoryRepository;
     private final AppUserRepository userRepository;
+    private final ProviderRepository providerRepository;
+    private final BusMerchantsRepository busMerchantsRepository;
+    final JdbcTemplate jdbcTemplate;
+
 
     public BusDTO registerBus(BusDAO request) {
         try {
@@ -92,7 +98,6 @@ public class BusService {
                 bus.getCategory().getCategoryName(), bus.getCategory().getModelYear(), bus.getSteeringSide(), bus.getCategory().getId());
     }
 
-
     public List<BusDriverDTO> getBusDrivers(UUID busId) {
         var bus = busRepository.getBusDriversByBusId(busId).orElseThrow(() -> new NotFoundException("Bus not found"));
 
@@ -128,4 +133,64 @@ public class BusService {
             );
         }).toList();
     }
+
+
+    public List<BusMerchantDto> getBusMerchants(UUID busId) {
+        var bus = busRepository.getBusMerchantsByBusId(busId).orElseThrow(() -> new NotFoundException("Bus Not found"));
+
+        return bus.getMerchants().stream().map((merchant) -> {
+            var provider = merchant.getProvider();
+            return new BusMerchantDto(merchant.getId(), merchant.getMerchantNumber(),
+                    provider.getProviderName(), provider.getProviderService());
+        }).toList();
+    }
+
+
+    public Short addBusMerchant(UUID busId, AddBusMerchantRequest request) {
+
+        var bus = busRepository.getBusMerchantsByBusId(busId).orElseThrow(() -> new NotFoundException("Bus Not found"));
+
+        boolean isExists = bus.getMerchants()
+                .stream()
+                .anyMatch((merchant ->
+                        merchant.getMerchantNumber().equals(request.merchantNumber()) && merchant.getProvider()
+                                .getId().equals(request.providerId())));
+
+
+        if (isExists) throw new ApiException("This merchant already exists");
+
+        var provider = providerRepository.findById(request.providerId()).orElseThrow(() -> new NotFoundException("Provider not exists"));
+
+        var merchant = BusMerchant.builder()
+                .provider(provider).bus(bus).merchantNumber(request.merchantNumber()).build();
+
+        var savedMerchant = busMerchantsRepository.save(merchant);
+        return savedMerchant.getId();
+    }
+
+
+    public Short updateBusMerchant(UUID busId, Short merchantId, AddBusMerchantRequest request) {
+        var bus = busRepository.getBusMerchantsByBusId(busId).orElseThrow(() -> new NotFoundException("Bus Not found"));
+
+        var existedMerchant = bus.getMerchants().stream().filter(merchant -> merchant.getId().equals(merchantId)).findFirst().orElseThrow(() -> new NotFoundException("Merchant not found"));
+        existedMerchant.setMerchantNumber(request.merchantNumber());
+
+        if (!existedMerchant.getProvider().getId().equals(request.providerId())) {
+            var provider = providerRepository.findById(request.providerId()).orElseThrow(() -> new NotFoundException("Provider not exists"));
+            existedMerchant.setProvider(provider);
+        }
+        busRepository.save(bus);
+        return existedMerchant.getId();
+    }
+
+
+    public void deleteBusMerchant(UUID busId, Short merchantId) {
+        var bus = busRepository.getBusMerchantsByBusId(busId).orElseThrow(() -> new NotFoundException("Bus Not found"));
+
+        var deleteMerchant = bus.getMerchants().stream().filter(merchant -> merchant.getId().equals(merchantId)).findFirst().orElseThrow(() -> new NotFoundException("Merchant not found"));
+
+        bus.getMerchants().remove(deleteMerchant);
+        busRepository.save(bus);
+    }
+
 }

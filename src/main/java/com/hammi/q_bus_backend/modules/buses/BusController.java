@@ -41,4 +41,28 @@ public class BusController {
     public ResponseEntity<ApiResponse<List<BusDriverDTO>>> getBusDrivers(@PathVariable UUID busId) {
         return ResponseEntity.ok(new ApiResponse<>(busService.getBusDrivers(busId)));
     }
+
+
+    @GetMapping("/{busId}/merchants")
+    public ResponseEntity<ApiResponse<List<BusMerchantDto>>> getBusMerchants(@PathVariable UUID busId) {
+        return ResponseEntity.ok(new ApiResponse<>(busService.getBusMerchants(busId)));
+    }
+
+    @PostMapping("/{busId}/merchants")
+    public ResponseEntity<ApiResponse<Short>> addBusMerchant(@PathVariable UUID busId, @Valid @RequestBody AddBusMerchantRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(busService.addBusMerchant(busId, request)));
+    }
+
+
+    @PutMapping("/{busId}/merchants/{merchantId}")
+    public ResponseEntity<ApiResponse<Short>> addBusMerchant(@PathVariable UUID busId, @PathVariable Short merchantId, @Valid @RequestBody AddBusMerchantRequest request) {
+        return ResponseEntity.ok().body(new ApiResponse<>(busService.updateBusMerchant(busId, merchantId, request)));
+    }
+
+
+    @DeleteMapping("/{busId}/merchants/{merchantId}")
+    public ResponseEntity<ApiResponse<Short>> deleteMerchant(@PathVariable UUID busId, @PathVariable Short merchantId) {
+        busService.deleteBusMerchant(busId, merchantId);
+        return ResponseEntity.ok().body(new ApiResponse<>(null));
+    }
 }
